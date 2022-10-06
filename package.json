@@ -1,0 +1,16 @@
+{
+  "name": "com.nevelson.game-option-settings",
+  "version": "1.0.0",
+  "displayName": "Game Option Settings",
+  "description": "A lightweight package for setting up game settings menus.",
+  "unity": "2020.3",
+  "dependencies": {
+    "com.unity.test-framework": "1.1.31"
+  },
+  "keywords": [ "options", "settings", "menu", "graphics", "volume" ],
+  "author": {
+    "name": "Nicholas Evelson",
+    "email": "runefindergamedev@gmail.com",
+    "url": "https://store.steampowered.com/app/1481840/Frisbros/"
+  }
+}
