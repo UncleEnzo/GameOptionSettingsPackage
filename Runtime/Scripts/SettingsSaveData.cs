@@ -87,13 +87,13 @@ namespace Nevelson.GameSettingOptions
                 Debug.Log($"Found Settings Data");
             }
 
-            Debug.Log($"Master Volume: {MasterVolume}");
-            Debug.Log($"Music Volume: {MusicVolume}");
-            Debug.Log($"SFX Volume: {SFXVolume}");
-            Debug.Log($"VSync: {VSync}");
-            Debug.Log($"Full Screen: {FullScreen}");
-            Debug.Log($"Resolution {Resolution}");
-            Debug.Log($"Target FPS: {TargetFPS}");
+            Debug.Log($"Saved Master Volume: {MasterVolume}");
+            Debug.Log($"Saved Music Volume: {MusicVolume}");
+            Debug.Log($"Saved SFX Volume: {SFXVolume}");
+            Debug.Log($"Saved VSync: {VSync}");
+            Debug.Log($"Saved Full Screen: {FullScreen}");
+            Debug.Log($"Saved Resolution {Resolution}");
+            Debug.Log($"Saved Target FPS: {TargetFPS}");
         }
 
         static int BoolToSaveVal(bool isTrue)
