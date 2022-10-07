@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -28,13 +29,19 @@ namespace Nevelson.GameSettingOptions
     //other things I want:
     //ability to choose between predetermined resolutions and all resos (for pixel art games)
     //Graphical settings
-
     //different defaults with the fullscreen/resolution relationship || Allow setting it during 
 
 
     //Edge cases>
     //Game gets moved to a different monitor and the list of options changes (need to refresh every time resolution changing becomes available
     //
+
+    [Serializable]
+    public struct DesiredResolution
+    {
+        public int width;
+        public int height;
+    }
 
 
     public class Settings : MonoBehaviour
@@ -48,6 +55,7 @@ namespace Nevelson.GameSettingOptions
         [SerializeField] TMP_Dropdown resolutionDropdown;
         [SerializeField] TMP_Dropdown targetFPSDropdown;
         [SerializeField] bool fullScreenResolutionChanging;
+        [SerializeField] DesiredResolution[] desiredResolutions;
 
         SettingsSaveData settingsData;
         Resolution[] resolutions;
@@ -73,7 +81,9 @@ namespace Nevelson.GameSettingOptions
 
 
         //issues:
-        //need to hammer out resolution changing when in full screen and not
+        //give ALL resolution options WITH HZ
+        //make the thing so you 
+
         //CURRENTRESOLUTION is the screen's current resolution not your actual value
         //Need to lower amount of resolutions based on hertz
         //need to have a resolution preset option
@@ -225,9 +235,19 @@ namespace Nevelson.GameSettingOptions
         void Awake()
         {
             settingsData = new SettingsSaveData();
+
+            if (desiredResolutions == null || desiredResolutions.Length == 0)
+            {
+                PopulateAvailableResolutionsDropdown();
+            }
+            else
+            {
+                PopulateApprovedResolutionsDropdown();
+            }
+
+
             //TODO NEED TO FIGURE OUT HZ AS WELL , currenlty it just takes first of any resolution
             //couple of options > Collect the actual screen's resolution and filter any options that DON'T HAVE THE SAME HZ
-            PopulateAvailableResolutionsDropdown();
             //CollectApprovedResolutions(); // this is just the list you allow (For pixel art game)
             PopulateAvailableTargetFPS();
 
@@ -261,6 +281,32 @@ namespace Nevelson.GameSettingOptions
             SaveAllData();
         }
 
+        void PopulateApprovedResolutionsDropdown()
+        {
+            int Hz = Screen.currentResolution.refreshRate;
+
+            //filter the list of HZs that are not native
+            resolutions = Screen.resolutions.Where(res => res.refreshRate == Hz).ToArray();
+            resolutionDropdown.ClearOptions();
+
+            //only extract ones that are on the approved list
+            List<string> resolutionsList = new List<string>();
+            for (int i = 0; i < resolutions.Length; i++)
+            {
+                Resolution resolution = resolutions[i];
+                foreach (var approvedResolution in desiredResolutions)
+                {
+                    if (approvedResolution.width == resolution.width &&
+                        approvedResolution.height == resolution.height)
+                    {
+                        string res = $"{resolution.width} x {resolution.height} @ {resolution.refreshRate}";
+                        resolutionsList.Add(res);
+                    }
+                }
+            }
+            resolutionDropdown.AddOptions(resolutionsList);
+        }
+
         void PopulateAvailableResolutionsDropdown()
         {
             resolutions = Screen.resolutions;
@@ -269,7 +315,7 @@ namespace Nevelson.GameSettingOptions
             for (int i = 0; i < resolutions.Length; i++)
             {
                 Resolution resolution = resolutions[i];
-                string res = $"{resolution.width} x {resolution.height}";
+                string res = $"{resolution.width} x {resolution.height} @ {resolution.refreshRate}";
                 resolutionsList.Add(res);
             }
             resolutionDropdown.AddOptions(resolutionsList);
@@ -282,7 +328,7 @@ namespace Nevelson.GameSettingOptions
             for (int i = 0; i < fpsCaps.Length; i++)
             {
                 int fpsCap = fpsCaps[i];
-                string fps = fpsCap == -1 ? "UnLimited" : $"{fpsCap}";
+                string fps = fpsCap == -1 ? "Unlimited" : $"{fpsCap}";
                 fpsList.Add(fps);
             }
             targetFPSDropdown.AddOptions(fpsList);

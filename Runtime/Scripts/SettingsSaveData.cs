@@ -114,11 +114,14 @@ namespace Nevelson.GameSettingOptions
         static Resolution StringToResolution(string value)
         {
             int width = int.Parse(value.Substring(0, value.IndexOf(" ")));
-            int height = int.Parse(value.Split('x')[1].TrimStart(' '));
+            int height = int.Parse(value.Split('x')[1].Split('@')[0].TrimStart(' ').TrimEnd(' '));
+            int refreshRate = int.Parse(value.Split('@')[1].Split('H')[0].TrimStart(' '));
+
             foreach (var resolution in Screen.resolutions)
             {
                 if (resolution.width == width &&
-                   resolution.height == height)
+                   resolution.height == height &&
+                   resolution.refreshRate == refreshRate)
                 {
                     return resolution;
                 }
@@ -129,7 +132,7 @@ namespace Nevelson.GameSettingOptions
 
         static string ResolutionToString(Resolution value)
         {
-            return $"{value.width} x {value.height}";
+            return $"{value.width} x {value.height} @ {value.refreshRate} Hz";
         }
     }
 }
