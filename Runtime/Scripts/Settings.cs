@@ -71,14 +71,17 @@ namespace Nevelson.GameSettingOptions
             -1,
         };
 
-        //TESTING NOW:
-        //when i am in fullscreenreschangemode = false > it locks to the screens resolution automatically and unlocks to current 
-        //when I am in fullscreenchangingmode = true > 
+
+        //issues:
+        //need to hammer out resolution changing when in full screen and not
+        //CURRENTRESOLUTION is the screen's current resolution not your actual value
+        //Need to lower amount of resolutions based on hertz
+        //need to have a resolution preset option
+
+
 
         //TESTING:
-        //SET FULL SCREEN TO THE DISPLAY WINDOW THE APPLICATION IS CURRENTLY HOVERING OVER
         //REFRESHES THE RESOLUTIONS AVAILABLE BASED ON DISPLAY
-
         //LATER: GRAPHICS SETTINGS
 
 
@@ -128,6 +131,7 @@ namespace Nevelson.GameSettingOptions
             Debug.Log($"Setting vSync to: {value}");
             QualitySettings.vSyncCount = value ? 1 : 0;
             isVSync = value;
+            SetUIElementInteractable(isVSync, targetFPSDropdown);
         }
 
         /// <summary>
@@ -138,19 +142,35 @@ namespace Nevelson.GameSettingOptions
         public void SetFullScreenValue(bool value)
         {
             Debug.Log($"Setting full screen to: {value}");
-            if (!fullScreenResolutionChanging && value)
+
+            isFullScreen = value;
+            Screen.fullScreen = isFullScreen;
+
+            //sets to full screen with native display size resolution
+            if (!fullScreenResolutionChanging && isFullScreen)
             {
                 OnAwake_SetUIDropdownToSaved(ResolutionToDropdownIndex(Screen.currentResolution), resolutionDropdown);
             }
+            //Sets to full screen with current resolutions
+            else if (fullScreenResolutionChanging && isFullScreen)
+            {
+                OnAwake_SetUIDropdownToSaved(ResolutionToDropdownIndex(currentResolution), resolutionDropdown);
+            }
+            //sets to previously saved resolution (display size could be one of them)
+            else if (!fullScreenResolutionChanging && !isFullScreen)
+            {
+                OnAwake_SetUIDropdownToSaved(ResolutionToDropdownIndex(currentResolution.width, currentResolution.height), resolutionDropdown);
+            }
+            //Sets to previously saved resolution
+            else if (fullScreenResolutionChanging && !isFullScreen)
+            {
+                OnAwake_SetUIDropdownToSaved(ResolutionToDropdownIndex(currentResolution.width, currentResolution.height), resolutionDropdown);
+            }
             else
             {
-                Screen.SetResolution(currentResolution.width, currentResolution.height, false);
-                Debug.Log($"And resolution to: {currentResolution}");
+                Debug.LogError($"Unaccounted: fullscreenResChange = {fullScreenResolutionChanging}. isFullScreen = {isFullScreen}");
             }
-            Screen.fullScreen = value;
-            currentResolution = Screen.currentResolution;
-            Debug.LogError("SCREEN CURRENT RESOLUTION IS: " + Screen.currentResolution);
-            isFullScreen = value;
+
             if (!fullScreenResolutionChanging)
             {
                 SetUIElementInteractable(isFullScreen, resolutionDropdown);
@@ -159,27 +179,10 @@ namespace Nevelson.GameSettingOptions
 
         public void SetResolutionValue(int indexValue)
         {
-            if (!fullScreenResolutionChanging && isFullScreen)
-            {
-                Debug.LogError("Cannot set resolution manually while in full screen mode");
-                return;
-            }
-
             Resolution resolution = resolutions[indexValue];
-            if (!fullScreenResolutionChanging)
-            {
-                Screen.SetResolution(resolution.width, resolution.height, false);
-                isFullScreen = false;
-            }
-            else
-            {
-                Screen.SetResolution(resolution.width, resolution.height, isFullScreen);
-            }
+            Screen.SetResolution(resolution.width, resolution.height, isFullScreen);
             currentResolution = resolution;
             Debug.Log($"Setting resolution to: {currentResolution}");
-
-            Debug.LogError("SCREEN CURRENT RESOLUTION IS: " + Screen.currentResolution);
-
         }
 
         public void SetTargetFrameRateValue(int indexValue)
@@ -314,6 +317,21 @@ namespace Nevelson.GameSettingOptions
                 Resolution resolution = resolutions[i];
                 if (resolution.width == value.width &&
                     resolution.height == value.height)
+                {
+                    currentResolutionIndex = i;
+                }
+            }
+            return currentResolutionIndex;
+        }
+
+        int ResolutionToDropdownIndex(int width, int height)
+        {
+            int currentResolutionIndex = 0;
+            for (int i = 0; i < resolutions.Length; i++)
+            {
+                Resolution resolution = resolutions[i];
+                if (resolution.width == width &&
+                    resolution.height == height)
                 {
                     currentResolutionIndex = i;
                 }
