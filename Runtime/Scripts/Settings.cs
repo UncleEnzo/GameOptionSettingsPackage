@@ -177,6 +177,8 @@ namespace Nevelson.GameSettingOptions
         public void SetResolutionValue(int indexValue)
         {
             int screenResIndex = localResToScreenRes[indexValue];
+
+            Debug.Log("SCREEN RES INDEX IS" + screenResIndex);
             Resolution resolution = Screen.resolutions[screenResIndex];
             Screen.SetResolution(resolution.width, resolution.height, isFullScreen);
             currentResolution = resolution;
@@ -249,8 +251,10 @@ namespace Nevelson.GameSettingOptions
             OnAwake_SetUIVolumeSliderToSaved(settingsData.SFXVolume, sfxSlider);
             OnAwake_SetUIToggleToSaved(settingsData.VSync, vsyncToggle);
             OnAwake_SetUIToggleToSaved(settingsData.FullScreen, fullScreenToggle);
-            //WORKS IF YOU DON'T CALL THIS IN THE BEGINNING, BUT IF YOU DON'T THAT MEANS THE RESOLUTION WON'T BE RIGHT FOR THE GAME UNTIL PLAYER SETS IT
-            //OnAwake_SetUIDropdownToSaved(ResolutionToDropdownIndex(settingsData.Resolution), resolutionDropdown);
+            //18 DOESNT EXIST IN THIS CONTEXT
+            int listNum = ResolutionToDropdownIndex(settingsData.Resolution);
+            Debug.Log("LIST NUM: " + listNum);
+            OnAwake_SetUIDropdownToSaved(listNum, resolutionDropdown);
             OnAwake_SetUIDropdownToSaved(TargetFPSToDropdownIndex(settingsData.TargetFPS), targetFPSDropdown);
         }
 
@@ -259,6 +263,7 @@ namespace Nevelson.GameSettingOptions
             if (Input.GetKeyDown(KeyCode.Tab))
             {
                 Debug.Log(localResToScreenRes.Count);
+
                 foreach (var lasdasd in localResToScreenRes)
                 {
                     Debug.Log("KEY " + lasdasd.Key + " VALUE " + lasdasd.Value);
@@ -392,9 +397,15 @@ namespace Nevelson.GameSettingOptions
                 }
             }
 
-            Debug.LogError("THEN IT WAS : " + largestHz.Key);
-            Debug.LogError("THE INDEX IS: " + largestHz.Value);
-            return largestHz.Value;
+            foreach (var pair in localResToScreenRes)
+            {
+                if (pair.Value == largestHz.Value)
+                {
+                    return pair.Key;
+                }
+            }
+
+            throw new UnityException($"Could not find corresponding key to res index: {largestHz.Value}");
         }
 
         int ResolutionToDropdownIndex(int width, int height)
