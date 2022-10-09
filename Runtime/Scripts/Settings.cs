@@ -9,22 +9,6 @@ using Toggle = UnityEngine.UI.Toggle;
 
 namespace Nevelson.GameSettingOptions
 {
-    //How To:
-    //Create an audio mixer named MasterVolume (EXPLAIN BETTER)
-    //Create two audio mixer groups and name them: MusicVolume and SFXVolume (EXPLAIN BETTER)
-    //Expose their volume channels (EXPLAIN BETTER)
-    //Reference the audiomixer in this script
-    //Make a UI container for your settings elements and add this script to it
-    //Create all ui elements and reference them in this script
-    //In the ui elements, add the correct script methods to the On Value changed events (EXPLAIN BETTER)
-
-    //Functionality:
-    //On awake sets all UI elements to the saved values
-    //On start sets all option settings to their saved values
-    //Master volume controls both music and sfx
-    //Clicking full screen disables resolution options and sets to current screen's resolution
-    //Disabling full screen lets you set different resolution options
-
     [Serializable]
     public struct DesiredResolution
     {
@@ -253,34 +237,28 @@ namespace Nevelson.GameSettingOptions
         void Awake()
         {
             settingsData = new SettingsSaveData();
-            RefreshResolutionDropdownOptions();
-            PopulateAvailableTargetFPS();
-            PopulateAvailableGraphicalLevels();
-            SetCorrectGraphicalDefault();
+            if (resolutionDropdown) RefreshResolutionDropdownOptions();
+            if (targetFPSDropdown) PopulateAvailableTargetFPS();
+            if (graphicsDropdown) PopulateAvailableGraphicalLevels();
+            if (graphicsDropdown) SetCorrectGraphicalDefault();
         }
 
         void Start()
         {
-            SetUIVolumeSlider(settingsData.MasterVolume, masterSlider);
-            SetUIVolumeSlider(settingsData.MusicVolume, musicSlider);
-            SetUIVolumeSlider(settingsData.SFXVolume, sfxSlider);
-            SetUIToggle(settingsData.VSync, vsyncToggle);
-            SetUIDropdown(TargetFPSToDropdownIndex(settingsData.TargetFPS), targetFPSDropdown);
-            SetUIDropdown(settingsData.Graphics, graphicsDropdown);
+            if (masterSlider) SetUIVolumeSlider(settingsData.MasterVolume, masterSlider);
+            if (musicSlider) SetUIVolumeSlider(settingsData.MusicVolume, musicSlider);
+            if (sfxSlider) SetUIVolumeSlider(settingsData.SFXVolume, sfxSlider);
+            if (vsyncToggle) SetUIToggle(settingsData.VSync, vsyncToggle);
+            if (targetFPSDropdown) SetUIDropdown(TargetFPSToDropdownIndex(settingsData.TargetFPS), targetFPSDropdown);
+            if (graphicsDropdown) SetUIDropdown(settingsData.Graphics, graphicsDropdown);
             //this needs to be called before full screen toggle to populate the currentResolution
-            SetUIDropdown(ResolutionToDropdownIndex(settingsData.Resolution), resolutionDropdown);
-            SetUIToggle(settingsData.FullScreen, fullScreenToggle);
+            if (resolutionDropdown) SetUIDropdown(ResolutionToDropdownIndex(settingsData.Resolution), resolutionDropdown);
+            if (fullScreenToggle) SetUIToggle(settingsData.FullScreen, fullScreenToggle);
         }
 
-        private void FixedUpdate()
+        void FixedUpdate()
         {
-            //removes resolutions unsupported by monitor when moving monitors
-            if (_resolutions == null || Screen.resolutions.Length != _resolutions.Length)
-            {
-                RefreshResolutionDropdownOptions();
-                _resolutions = Screen.resolutions;
-                SetUIDropdown(0, resolutionDropdown);
-            }
+            RepopulateDropdownOptionsOnDisplayChange();
         }
 
         void OnDisable()
@@ -302,6 +280,18 @@ namespace Nevelson.GameSettingOptions
             }
         }
 
+        void RepopulateDropdownOptionsOnDisplayChange()
+        {
+            if (_resolutions != null && Screen.resolutions.Length == _resolutions.Length)
+            {
+                return;
+            }
+
+            RefreshResolutionDropdownOptions();
+            _resolutions = Screen.resolutions;
+            SetUIDropdown(0, resolutionDropdown);
+        }
+
         void RefreshResolutionDropdownOptions()
         {
             if (desiredResolutions == null || desiredResolutions.Length == 0)
@@ -317,17 +307,17 @@ namespace Nevelson.GameSettingOptions
         void PopulateApprovedResolutionsDropdown()
         {
             //Add the current screen resolution as an option
-            List<DesiredResolution> dRes = desiredResolutions.ToList();
-            bool match = dRes.Exists(
-                x => x.width == Screen.currentResolution.width &&
-                x.height == Screen.currentResolution.height
+            List<DesiredResolution> desiredRes = desiredResolutions.ToList();
+            bool match = desiredRes.Exists(
+                res => res.width == Screen.currentResolution.width &&
+                res.height == Screen.currentResolution.height
                 );
             if (!match)
             {
-                dRes.Add(new DesiredResolution(Screen.currentResolution.width,
+                desiredRes.Add(new DesiredResolution(Screen.currentResolution.width,
                     Screen.currentResolution.height));
             }
-            desiredResolutions = dRes.ToArray();
+            desiredResolutions = desiredRes.ToArray();
 
             //only extract ones that are on the approved list
             resolutionDropdown.ClearOptions();
