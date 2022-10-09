@@ -62,6 +62,7 @@ namespace Nevelson.GameSettingOptions
         Dictionary<int, int> localResToScreenRes = new Dictionary<int, int>();
         SettingsSaveData settingsData;
         Resolution currentResolution;
+        Resolution[] _resolutions;
 
         float masterVolume;
         float musicVolume;
@@ -81,6 +82,19 @@ namespace Nevelson.GameSettingOptions
             1000,
             -1,
         };
+
+        Resolution[] ScreenResolutions
+        {
+            get
+            {
+                if (_resolutions == null || Screen.resolutions.Length != _resolutions.Length)
+                {
+                    RefreshResolutionDropdownOptions();
+                    _resolutions = Screen.resolutions;
+                }
+                return _resolutions;
+            }
+        }
 
         /// <summary>
         /// Sets the volume of the master mixer.  
@@ -185,7 +199,7 @@ namespace Nevelson.GameSettingOptions
         {
             int screenResIndex = localResToScreenRes[indexValue];
             Debug.Log("SCREEN RES INDEX IS" + screenResIndex);
-            Resolution resolution = Screen.resolutions[screenResIndex];
+            Resolution resolution = ScreenResolutions[screenResIndex];
             Screen.SetResolution(resolution.width, resolution.height, isFullScreen);
             currentResolution = resolution;
             Debug.Log($"Setting resolution to: {currentResolution}");
@@ -249,10 +263,16 @@ namespace Nevelson.GameSettingOptions
             OnAwake_SetUIVolumeSliderToSaved(settingsData.MusicVolume, musicSlider);
             OnAwake_SetUIVolumeSliderToSaved(settingsData.SFXVolume, sfxSlider);
             OnAwake_SetUIToggleToSaved(settingsData.VSync, vsyncToggle);
-            OnAwake_SetUIToggleToSaved(settingsData.FullScreen, fullScreenToggle);
+            //this needs to be called before full screen toggle to populate the currentResolution
             OnAwake_SetUIDropdownToSaved(ResolutionToDropdownIndex(settingsData.Resolution), resolutionDropdown);
+            OnAwake_SetUIToggleToSaved(settingsData.FullScreen, fullScreenToggle);
             OnAwake_SetUIDropdownToSaved(TargetFPSToDropdownIndex(settingsData.TargetFPS), targetFPSDropdown);
         }
+
+        //private void FixedUpdate()
+        //{
+        //    RefreshResolutionDropdownOptions();
+        //}
 
         private void Update()
         {
@@ -382,9 +402,11 @@ namespace Nevelson.GameSettingOptions
         int ResolutionToDropdownIndex(int width, int height)
         {
             Dictionary<Resolution, int> resolutionContendors = new Dictionary<Resolution, int>();
-            for (int i = 0; i < Screen.resolutions.Length; i++)
+            Debug.LogError("SCREEN RES LENGTH IS: " + ScreenResolutions.Length);
+            Debug.LogError($"WIDTH x HEIGHT is {width} {height}");
+            for (int i = 0; i < ScreenResolutions.Length; i++)
             {
-                Resolution resolution = Screen.resolutions[i];
+                Resolution resolution = ScreenResolutions[i];
                 if (resolution.width == width &&
                     resolution.height == height)
                 {
@@ -395,7 +417,7 @@ namespace Nevelson.GameSettingOptions
 
             if (resolutionContendors.Count == 0)
             {
-                throw new UnityException("Could not find a resolution with correct width/height/index");
+                throw new UnityException($"Could not find any resolutions with correct {width} x {height}");
             }
 
             KeyValuePair<Resolution, int> largestHz = resolutionContendors.First();
