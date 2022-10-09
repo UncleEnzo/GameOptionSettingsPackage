@@ -11,10 +11,12 @@ namespace Nevelson.GameSettingOptions
         const string FULL_SCREEN = "FULLSCREEN";
         const string RESOLUTION = "RESOLUTION";
         const string TARGET_FPS = "FPS";
+        const string GRAPHICS = "GRAPHICS";
         const float DEFAULT_VOLUME = 1f;
         const bool DEFAULT_VSYNC = false;
         const bool DEFAULT_FULL_SCREEN = true;
         const int DEFAULT_TARGET_FPS = 120;
+        const int DEFAULT_GRAPHICS = -1;
 
         public float MasterVolume
         {
@@ -58,6 +60,12 @@ namespace Nevelson.GameSettingOptions
             set => PlayerPrefs.SetInt(TARGET_FPS, value);
         }
 
+        public int Graphics
+        {
+            get => PlayerPrefs.GetInt(GRAPHICS);
+            set => PlayerPrefs.SetInt(GRAPHICS, value);
+        }
+
         /// <summary>
         /// Constructs the class for global game settings.  
         /// </summary>
@@ -69,7 +77,8 @@ namespace Nevelson.GameSettingOptions
                 !PlayerPrefs.HasKey(VSYNC) ||
                 !PlayerPrefs.HasKey(FULL_SCREEN) ||
                 !PlayerPrefs.HasKey(RESOLUTION) ||
-                !PlayerPrefs.HasKey(TARGET_FPS)
+                !PlayerPrefs.HasKey(TARGET_FPS) ||
+                !PlayerPrefs.HasKey(GRAPHICS)
                 )
 
             {
@@ -81,19 +90,21 @@ namespace Nevelson.GameSettingOptions
                 FullScreen = DEFAULT_FULL_SCREEN;
                 Resolution = Screen.currentResolution;
                 TargetFPS = DEFAULT_TARGET_FPS;
+                Graphics = DEFAULT_GRAPHICS;
             }
             else
             {
                 Debug.Log($"Found Settings Data");
             }
 
-            Debug.Log($"Saved Master Volume: {MasterVolume}");
-            Debug.Log($"Saved Music Volume: {MusicVolume}");
-            Debug.Log($"Saved SFX Volume: {SFXVolume}");
-            Debug.Log($"Saved VSync: {VSync}");
-            Debug.Log($"Saved Full Screen: {FullScreen}");
-            Debug.Log($"Saved Resolution {Resolution}");
-            Debug.Log($"Saved Target FPS: {TargetFPS}");
+            Debug.Log($"Found Master Volume: {MasterVolume}");
+            Debug.Log($"Found Music Volume: {MusicVolume}");
+            Debug.Log($"Found SFX Volume: {SFXVolume}");
+            Debug.Log($"Found VSync: {VSync}");
+            Debug.Log($"Found Full Screen: {FullScreen}");
+            Debug.Log($"Found Resolution {Resolution}");
+            Debug.Log($"Found Target FPS: {TargetFPS}");
+            Debug.Log($"Found Graphics: {Graphics}");
         }
 
         static int BoolToSaveVal(bool isTrue)
