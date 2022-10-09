@@ -151,16 +151,19 @@ namespace Nevelson.GameSettingOptions
             //Sets to full screen with current resolutions
             else if (fullScreenResolutionChanging && isFullScreen)
             {
+                Debug.Log($"CALLING THIS: {currentResolution}");
                 OnAwake_SetUIDropdownToSaved(ResolutionToDropdownIndex(currentResolution), resolutionDropdown);
             }
             //sets to previously saved resolution (display size could be one of them)
             else if (!fullScreenResolutionChanging && !isFullScreen)
             {
+                Debug.Log($"CALLING THIS: {currentResolution} 1");
                 OnAwake_SetUIDropdownToSaved(ResolutionToDropdownIndex(currentResolution.width, currentResolution.height), resolutionDropdown);
             }
             //Sets to previously saved resolution
             else if (fullScreenResolutionChanging && !isFullScreen)
             {
+                Debug.Log($"CALLING THIS: {currentResolution} 2");
                 OnAwake_SetUIDropdownToSaved(ResolutionToDropdownIndex(currentResolution.width, currentResolution.height), resolutionDropdown);
             }
             else
@@ -174,10 +177,13 @@ namespace Nevelson.GameSettingOptions
             }
         }
 
+        /// <summary>
+        /// Sets the value of the game's resolution.
+        /// </summary>
+        /// <param name="indexValue"></param>
         public void SetResolutionValue(int indexValue)
         {
             int screenResIndex = localResToScreenRes[indexValue];
-
             Debug.Log("SCREEN RES INDEX IS" + screenResIndex);
             Resolution resolution = Screen.resolutions[screenResIndex];
             Screen.SetResolution(resolution.width, resolution.height, isFullScreen);
@@ -233,14 +239,7 @@ namespace Nevelson.GameSettingOptions
         void Awake()
         {
             settingsData = new SettingsSaveData();
-            if (desiredResolutions == null || desiredResolutions.Length == 0)
-            {
-                PopulateAvailableResolutionsDropdown();
-            }
-            else
-            {
-                PopulateApprovedResolutionsDropdown();
-            }
+            RefreshResolutionDropdownOptions();
             PopulateAvailableTargetFPS();
         }
 
@@ -251,10 +250,7 @@ namespace Nevelson.GameSettingOptions
             OnAwake_SetUIVolumeSliderToSaved(settingsData.SFXVolume, sfxSlider);
             OnAwake_SetUIToggleToSaved(settingsData.VSync, vsyncToggle);
             OnAwake_SetUIToggleToSaved(settingsData.FullScreen, fullScreenToggle);
-            //18 DOESNT EXIST IN THIS CONTEXT
-            int listNum = ResolutionToDropdownIndex(settingsData.Resolution);
-            Debug.Log("LIST NUM: " + listNum);
-            OnAwake_SetUIDropdownToSaved(listNum, resolutionDropdown);
+            OnAwake_SetUIDropdownToSaved(ResolutionToDropdownIndex(settingsData.Resolution), resolutionDropdown);
             OnAwake_SetUIDropdownToSaved(TargetFPSToDropdownIndex(settingsData.TargetFPS), targetFPSDropdown);
         }
 
@@ -279,6 +275,18 @@ namespace Nevelson.GameSettingOptions
         void OnDestroy()
         {
             SaveAllData();
+        }
+
+        void RefreshResolutionDropdownOptions()
+        {
+            if (desiredResolutions == null || desiredResolutions.Length == 0)
+            {
+                PopulateAvailableResolutionsDropdown();
+            }
+            else
+            {
+                PopulateApprovedResolutionsDropdown();
+            }
         }
 
         void PopulateApprovedResolutionsDropdown()
@@ -368,15 +376,17 @@ namespace Nevelson.GameSettingOptions
 
         int ResolutionToDropdownIndex(Resolution value)
         {
-            Debug.LogError("IT IS: " + value);
+            return ResolutionToDropdownIndex(value.width, value.height);
+        }
 
-
+        int ResolutionToDropdownIndex(int width, int height)
+        {
             Dictionary<Resolution, int> resolutionContendors = new Dictionary<Resolution, int>();
             for (int i = 0; i < Screen.resolutions.Length; i++)
             {
                 Resolution resolution = Screen.resolutions[i];
-                if (resolution.width == value.width &&
-                    resolution.height == value.height)
+                if (resolution.width == width &&
+                    resolution.height == height)
                 {
 
                     resolutionContendors.Add(resolution, i);
@@ -406,21 +416,6 @@ namespace Nevelson.GameSettingOptions
             }
 
             throw new UnityException($"Could not find corresponding key to res index: {largestHz.Value}");
-        }
-
-        int ResolutionToDropdownIndex(int width, int height)
-        {
-            int currentResolutionIndex = 0;
-            for (int i = 0; i < Screen.resolutions.Length; i++)
-            {
-                Resolution resolution = Screen.resolutions[i];
-                if (resolution.width == width &&
-                    resolution.height == height)
-                {
-                    currentResolutionIndex = i;
-                }
-            }
-            return currentResolutionIndex;
         }
 
         int TargetFPSToDropdownIndex(int value)
