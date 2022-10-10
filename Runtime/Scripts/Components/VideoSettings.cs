@@ -185,11 +185,18 @@ namespace Nevelson.GameSettingOptions
         protected override void Awake()
         {
             base.Awake();
+            graphicsSettingNames = QualitySettings.names;
             if (resolutionDropdown) RefreshResolutionDropdownOptions();
             if (targetFPSDropdown) PopulateAvailableTargetFPS();
-            graphicsSettingNames = QualitySettings.names;
             if (graphicsDropdown) PopulateAvailableGraphicalLevels();
             if (graphicsDropdown) SetCorrectGraphicalDefault();
+
+            //I call this here once because if the values don't change from UI below they don't get set on init
+            if (vsyncToggle) SetVsyncValue(settingsData.VSync);
+            if (targetFPSDropdown) SetTargetFrameRateValue(TargetFPSToDropdownIndex(settingsData.TargetFPS));
+            if (resolutionDropdown) SetResolutionValue(ResolutionToDropdownIndex(settingsData.Resolution));
+            if (fullScreenToggle) SetFullScreenValue(settingsData.FullScreen);
+            if (graphicsDropdown) SetGraphicsValue(settingsData.Graphics);
         }
 
         protected override void Start()

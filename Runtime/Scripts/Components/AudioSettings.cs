@@ -65,7 +65,14 @@ namespace Nevelson.GameSettingOptions
             settingsData.SFXVolume = sfxVolume;
         }
 
-        protected override void Awake() { base.Awake(); }
+        protected override void Awake()
+        {
+            base.Awake();
+            //I call this here once because if the values don't change from UI below they don't get set on init
+            if (masterSlider) SetMasterValue(settingsData.MasterVolume);
+            if (musicSlider) SetMusicValue(settingsData.MusicVolume);
+            if (sfxSlider) SetSFXValue(settingsData.SFXVolume);
+        }
 
         protected override void Start()
         {
