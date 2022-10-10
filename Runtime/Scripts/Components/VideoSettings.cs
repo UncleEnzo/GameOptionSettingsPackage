@@ -187,6 +187,7 @@ namespace Nevelson.GameSettingOptions
             base.Awake();
             if (resolutionDropdown) RefreshResolutionDropdownOptions();
             if (targetFPSDropdown) PopulateAvailableTargetFPS();
+            graphicsSettingNames = QualitySettings.names;
             if (graphicsDropdown) PopulateAvailableGraphicalLevels();
             if (graphicsDropdown) SetCorrectGraphicalDefault();
         }
@@ -319,7 +320,6 @@ namespace Nevelson.GameSettingOptions
         void PopulateAvailableGraphicalLevels()
         {
             graphicsDropdown.ClearOptions();
-            graphicsSettingNames = QualitySettings.names;
             List<string> graphicsList = new List<string>();
             for (int i = 0; i < graphicsSettingNames.Length; i++)
             {
