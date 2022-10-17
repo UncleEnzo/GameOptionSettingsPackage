@@ -182,9 +182,31 @@ namespace Nevelson.GameSettingOptions
             settingsData.Graphics = graphics;
         }
 
+        /// <summary>
+        /// Refreshes if resolution and fps dropdowns are interactable based on the vSync and fullscreen toggles.
+        /// </summary>
+        public void RefreshUIElementInteractables()
+        {
+            Debug.Log("Refreshing interactables.");
+            if (targetFPSDropdown && vsyncToggle)
+            {
+                targetFPSDropdown.interactable = !settingsData.VSync;
+            }
+
+            if (resolutionDropdown && fullScreenToggle)
+            {
+                resolutionDropdown.interactable = !settingsData.FullScreen;
+            }
+        }
+
         protected override void Awake()
         {
             base.Awake();
+            Debug.Log($"Found VSync: {settingsData.VSync}");
+            Debug.Log($"Found Full Screen: {settingsData.FullScreen}");
+            Debug.Log($"Found Resolution {settingsData.Resolution}");
+            Debug.Log($"Found Target FPS: {settingsData.TargetFPS}");
+            Debug.Log($"Found Graphics: {settingsData.Graphics}");
             graphicsSettingNames = QualitySettings.names;
             if (resolutionDropdown) RefreshResolutionDropdownOptions();
             if (targetFPSDropdown) PopulateAvailableTargetFPS();
@@ -192,8 +214,8 @@ namespace Nevelson.GameSettingOptions
             if (graphicsDropdown) SetCorrectGraphicalDefault();
 
             //I call this here once because if the values don't change from UI below they don't get set on init
-            if (vsyncToggle) SetVsyncValue(settingsData.VSync);
             if (targetFPSDropdown) SetTargetFrameRateValue(TargetFPSToDropdownIndex(settingsData.TargetFPS));
+            if (vsyncToggle) SetVsyncValue(settingsData.VSync);
             if (resolutionDropdown) SetResolutionValue(ResolutionToDropdownIndex(settingsData.Resolution));
             if (fullScreenToggle) SetFullScreenValue(settingsData.FullScreen);
             if (graphicsDropdown) SetGraphicsValue(settingsData.Graphics);
@@ -202,9 +224,9 @@ namespace Nevelson.GameSettingOptions
         protected override void Start()
         {
             base.Start();
-            if (vsyncToggle) SetUIToggle(settingsData.VSync, vsyncToggle);
-            if (targetFPSDropdown) SetUIDropdown(TargetFPSToDropdownIndex(settingsData.TargetFPS), targetFPSDropdown);
             if (graphicsDropdown) SetUIDropdown(settingsData.Graphics, graphicsDropdown);
+            if (targetFPSDropdown) SetUIDropdown(TargetFPSToDropdownIndex(settingsData.TargetFPS), targetFPSDropdown);
+            if (vsyncToggle) SetUIToggle(settingsData.VSync, vsyncToggle);
             //this needs to be called before full screen toggle to populate the currentResolution
             if (resolutionDropdown) SetUIDropdown(ResolutionToDropdownIndex(settingsData.Resolution), resolutionDropdown);
             if (fullScreenToggle) SetUIToggle(settingsData.FullScreen, fullScreenToggle);

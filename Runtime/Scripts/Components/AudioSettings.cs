@@ -68,6 +68,10 @@ namespace Nevelson.GameSettingOptions
         protected override void Awake()
         {
             base.Awake();
+            Debug.Log($"Found Master Volume: {settingsData.MasterVolume}");
+            Debug.Log($"Found Music Volume: {settingsData.MusicVolume}");
+            Debug.Log($"Found SFX Volume: {settingsData.SFXVolume}");
+
             //I call this here once because if the values don't change from UI below they don't get set on init
             if (masterSlider) SetMasterValue(settingsData.MasterVolume);
             if (musicSlider) SetMusicValue(settingsData.MusicVolume);
