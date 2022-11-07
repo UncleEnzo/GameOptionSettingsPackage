@@ -68,6 +68,12 @@ namespace Nevelson.GameSettingOptions
         protected override void Awake()
         {
             base.Awake();
+
+        }
+
+        protected override void Start()
+        {
+            base.Start();
             Debug.Log($"Found Master Volume: {settingsData.MasterVolume}");
             Debug.Log($"Found Music Volume: {settingsData.MusicVolume}");
             Debug.Log($"Found SFX Volume: {settingsData.SFXVolume}");
@@ -76,11 +82,7 @@ namespace Nevelson.GameSettingOptions
             if (masterSlider) SetMasterValue(settingsData.MasterVolume);
             if (musicSlider) SetMusicValue(settingsData.MusicVolume);
             if (sfxSlider) SetSFXValue(settingsData.SFXVolume);
-        }
 
-        protected override void Start()
-        {
-            base.Start();
             if (masterSlider) SetUIVolumeSlider(settingsData.MasterVolume, masterSlider);
             if (musicSlider) SetUIVolumeSlider(settingsData.MusicVolume, musicSlider);
             if (sfxSlider) SetUIVolumeSlider(settingsData.SFXVolume, sfxSlider);
