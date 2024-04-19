@@ -83,7 +83,7 @@ namespace Nevelson.GameSettingOptions
 
             {
                 Debug.Log("Initializing Settings Data");
-                MasterVolume = 1f;
+                MasterVolume = DEFAULT_VOLUME;
                 MusicVolume = DEFAULT_VOLUME;
                 SFXVolume = DEFAULT_VOLUME;
                 VSync = DEFAULT_VSYNC;
