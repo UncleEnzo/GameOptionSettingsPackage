@@ -12,7 +12,7 @@ namespace Nevelson.GameSettingOptions
         const string RESOLUTION = "RESOLUTION";
         const string TARGET_FPS = "FPS";
         const string GRAPHICS = "GRAPHICS";
-        const float DEFAULT_VOLUME = 1f;
+        const float DEFAULT_VOLUME = .5f;
         const bool DEFAULT_VSYNC = false;
         const bool DEFAULT_FULL_SCREEN = true;
         const int DEFAULT_TARGET_FPS = 120;
@@ -83,7 +83,7 @@ namespace Nevelson.GameSettingOptions
 
             {
                 Debug.Log("Initializing Settings Data");
-                MasterVolume = DEFAULT_VOLUME;
+                MasterVolume = 1f;
                 MusicVolume = DEFAULT_VOLUME;
                 SFXVolume = DEFAULT_VOLUME;
                 VSync = DEFAULT_VSYNC;
