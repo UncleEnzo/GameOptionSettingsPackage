@@ -56,25 +56,27 @@ namespace Nevelson.GameSettingOptions
         protected override void Start()
         {
             base.Start();
-            if (!PlayerPrefs.HasKey(MASTER_VOLUME_KEY) ||
-                !PlayerPrefs.HasKey(MUSIC_VOLUME_KEY) ||
-                !PlayerPrefs.HasKey(SFX_VOLUME_KEY) ||
-                !PlayerPrefs.HasKey(UI_VOLUME_KEY))
-            {
-                //default value supplied in the getters.  doing this just for logging purposes to verify
-                Debug.Log($"{AUDIO_LOGGING}Could not find audio player prefs. Initializing \n" +
-                    $"Master volume {MasterVolume}\n" +
-                    $"Music volume {MusicVolume}\n" +
-                    $"SFX volume {SFXVolume}\n" +
-                    $"UI volume {UIVolume}\n");
-            }
-            else
+            //need to check if ANY of the key exist, because if we could set the music volume but never set master
+            //volume because we don't have a slider for it.  Then it always returns default, but that is not the 
+            //same as having the key
+            if (PlayerPrefs.HasKey(MASTER_VOLUME_KEY) ||
+                PlayerPrefs.HasKey(MUSIC_VOLUME_KEY) ||
+                PlayerPrefs.HasKey(SFX_VOLUME_KEY) ||
+                PlayerPrefs.HasKey(UI_VOLUME_KEY))
             {
                 Debug.Log($"{AUDIO_LOGGING} found audio player prefs:\n" +
                     $"Master volume {MasterVolume}\n" +
                     $"Music volume {MusicVolume}\n" +
                     $"SFX volume {SFXVolume}\n" +
                     $"UI volume {UIVolume}");
+            }
+            else
+            {
+                Debug.Log($"{AUDIO_LOGGING}Could not find audio player prefs. Initializing \n" +
+                    $"Master volume {MasterVolume}\n" +
+                    $"Music volume {MusicVolume}\n" +
+                    $"SFX volume {SFXVolume}\n" +
+                    $"UI volume {UIVolume}\n");
             }
 
             //Setting the slider calls on change which then sets the Mixers using mixer on change values
