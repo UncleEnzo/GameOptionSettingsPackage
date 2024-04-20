@@ -1,19 +1,24 @@
-using Nevelson.GameSettingOptions;
 using UnityEngine;
 
-public abstract class SettingsBase : MonoBehaviour
+namespace Nevelson.GameSettingOptions
 {
-    [SerializeField] bool saveDataOnDisable = true;
-    [SerializeField] bool saveDataOnDestroy = true;
-    protected SettingsSaveData settingsData;
+    //todo, need to do away with this entirely at some point
+    //Trying to separte Audio / Video
 
-    public abstract void SaveAllData();
+    //WANT TO KEEP THE SAVE DATA ON DISABLE LOGIC
+    public abstract class SettingsBase : MonoBehaviour
+    {
+        [SerializeField] bool saveDataOnDisable = true;
+        [SerializeField] bool saveDataOnDestroy = true;
 
-    protected virtual void Awake() { settingsData = new SettingsSaveData(); }
+        public abstract void SaveAllData();
 
-    protected virtual void Start() { }
+        protected virtual void Awake() { }
 
-    protected virtual void OnDisable() { if (saveDataOnDisable) SaveAllData(); }
+        protected virtual void Start() { }
 
-    protected virtual void OnDestroy() { if (saveDataOnDestroy) SaveAllData(); }
+        protected virtual void OnDisable() { if (saveDataOnDisable) SaveAllData(); }
+
+        protected virtual void OnDestroy() { if (saveDataOnDestroy) SaveAllData(); }
+    }
 }

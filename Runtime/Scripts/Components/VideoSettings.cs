@@ -30,6 +30,7 @@ namespace Nevelson.GameSettingOptions
         [SerializeField] bool fullScreenResolutionChanging;
         [SerializeField] DesiredResolution[] desiredResolutions;
 
+        VideoSettingsData settingsData;
         Dictionary<int, int> localResToScreenRes = new Dictionary<int, int>();
         Resolution[] _resolutions;
         Resolution resolution;
@@ -202,6 +203,8 @@ namespace Nevelson.GameSettingOptions
         protected override void Awake()
         {
             base.Awake();
+            settingsData = new VideoSettingsData();
+
             Debug.Log($"Found VSync: {settingsData.VSync}");
             Debug.Log($"Found Full Screen: {settingsData.FullScreen}");
             Debug.Log($"Found Resolution {settingsData.Resolution}");

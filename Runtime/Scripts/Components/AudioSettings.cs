@@ -6,63 +6,51 @@ namespace Nevelson.GameSettingOptions
 {
     public class AudioSettings : SettingsBase
     {
+        const string AUDIO_LOGGING = "GameSettingsAudio: ";
+        const string MASTER_VOLUME_KEY = "MASTERVolume";
+        const string MUSIC_VOLUME_KEY = "MUSICVolume";
+        const string SFX_VOLUME_KEY = "SFXVolume";
+        const string UI_VOLUME_KEY = "UIVolume";
+
         [SerializeField] AudioMixer audioMixer;
-        [SerializeField] Slider masterSlider;
-        [SerializeField] Slider musicSlider;
-        [SerializeField] Slider sfxSlider;
+        [SerializeField] Slider masterVolumeSlider;
+        [SerializeField] Slider musicVolumeSlider;
+        [SerializeField] Slider sfxVolumeSlider;
+        [SerializeField] Slider uiVolumeSlider;
 
-        float masterVolume;
-        float musicVolume;
-        float sfxVolume;
+        [SerializeField, Range(0, 1f)] float defaultMasterVolume = 1f;
+        [SerializeField, Range(0, 1f)] float defaultMusicVolume = .5f;
+        [SerializeField, Range(0, 1f)] float defaultSFXVolume = .5f;
+        [SerializeField, Range(0, 1f)] float defaultUIVolume = .5f;
 
-        /// <summary>
-        /// Sets the volume of the master mixer.  
-        /// Called ONLY by the on change even for slider values
-        /// </summary>
-        /// <param name="volume"></param>
-        public void SetMasterValue(float volume)
+
+        float currentMasterVolume;
+        float currentMusicVolume;
+        float currentSFXVolume;
+        float currentUIVolume;
+
+        public float MasterVolume
         {
-            Debug.Log($"Setting Master volume to: {volume}");
-            audioMixer.SetFloat("MasterVolume", ConvertVolumeToLogarithmic(volume));
-            masterVolume = volume;
+            get => PlayerPrefs.GetFloat(MASTER_VOLUME_KEY, defaultMasterVolume);
+            set => PlayerPrefs.SetFloat(MASTER_VOLUME_KEY, value);
         }
 
-        /// <summary>
-        /// Sets the volume of the master mixer.  
-        /// Called ONLY by the on change even for slider values
-        /// </summary>
-        /// <param name="volume"></param>
-        public void SetMusicValue(float volume)
+        public float MusicVolume
         {
-            Debug.Log($"Setting Music volume to: {volume}");
-            audioMixer.SetFloat("MusicVolume", ConvertVolumeToLogarithmic(volume));
-            musicVolume = volume;
+            get => PlayerPrefs.GetFloat(MUSIC_VOLUME_KEY, defaultMusicVolume);
+            set => PlayerPrefs.SetFloat(MUSIC_VOLUME_KEY, value);
         }
 
-        /// <summary>
-        /// Sets the volume of the master mixer.  
-        /// Called ONLY by the on change even for slider values
-        /// </summary>
-        /// <param name="volume"></param>
-        public void SetSFXValue(float volume)
+        public float SFXVolume
         {
-            Debug.Log($"Setting SFX volume to: {volume}");
-            audioMixer.SetFloat("SFXVolume", ConvertVolumeToLogarithmic(volume));
-            sfxVolume = volume;
+            get => PlayerPrefs.GetFloat(SFX_VOLUME_KEY, defaultSFXVolume);
+            set => PlayerPrefs.SetFloat(SFX_VOLUME_KEY, value);
         }
 
-        /// <summary>
-        /// Saves the current settings to player prefs. 
-        /// This is done automatically when this component is disabled or destroyed.
-        /// </summary>
-        public override void SaveAllData()
+        public float UIVolume
         {
-            Debug.Log($"Saving Master Volume to: {masterVolume}");
-            settingsData.MasterVolume = masterVolume;
-            Debug.Log($"Saving Music Volume to: {musicVolume}");
-            settingsData.MusicVolume = musicVolume;
-            Debug.Log($"Saving SFX Volume to: {sfxVolume}");
-            settingsData.SFXVolume = sfxVolume;
+            get => PlayerPrefs.GetFloat(UI_VOLUME_KEY, currentUIVolume);
+            set => PlayerPrefs.SetFloat(UI_VOLUME_KEY, value);
         }
 
         protected override void Awake()
@@ -74,32 +62,116 @@ namespace Nevelson.GameSettingOptions
         protected override void Start()
         {
             base.Start();
-            Debug.Log($"Found Master Volume: {settingsData.MasterVolume}");
-            Debug.Log($"Found Music Volume: {settingsData.MusicVolume}");
-            Debug.Log($"Found SFX Volume: {settingsData.SFXVolume}");
+            if (!PlayerPrefs.HasKey(MASTER_VOLUME_KEY) ||
+                !PlayerPrefs.HasKey(MUSIC_VOLUME_KEY) ||
+                !PlayerPrefs.HasKey(SFX_VOLUME_KEY) ||
+                !PlayerPrefs.HasKey(UI_VOLUME_KEY))
+            {
+                //default value supplied in the getters.  doing this just for logging purposes to verify
+                Debug.Log($"{AUDIO_LOGGING}Could not find audio player prefs. Initializing \n" +
+                    $"Master volume {MasterVolume}\n" +
+                    $"Music volume {MusicVolume}\n" +
+                    $"SFX volume {SFXVolume}\n" +
+                    $"UI volume {UIVolume}\n");
+            }
+            else
+            {
+                Debug.Log($"{AUDIO_LOGGING} found audio player prefs:\n" +
+                    $"Master volume {MasterVolume}\n" +
+                    $"Music volume {MusicVolume}\n" +
+                    $"SFX volume {SFXVolume}\n" +
+                    $"UI volume {UIVolume}");
+            }
 
             //I call this here once because if the values don't change from UI below they don't get set on init
-            if (masterSlider) SetMasterValue(settingsData.MasterVolume);
-            if (musicSlider) SetMusicValue(settingsData.MusicVolume);
-            if (sfxSlider) SetSFXValue(settingsData.SFXVolume);
+            if (masterVolumeSlider) SetMasterMixerValue(MasterVolume);
+            if (musicVolumeSlider) SetMusicMixerValue(MusicVolume);
+            if (sfxVolumeSlider) SetSFXMixerValue(SFXVolume);
+            if (uiVolumeSlider) SetUIMixerValue(UIVolume);
 
-            if (masterSlider) SetUIVolumeSlider(settingsData.MasterVolume, masterSlider);
-            if (musicSlider) SetUIVolumeSlider(settingsData.MusicVolume, musicSlider);
-            if (sfxSlider) SetUIVolumeSlider(settingsData.SFXVolume, sfxSlider);
+            if (masterVolumeSlider) SetVolumeSlider(MasterVolume, masterVolumeSlider);
+            if (musicVolumeSlider) SetVolumeSlider(MusicVolume, musicVolumeSlider);
+            if (sfxVolumeSlider) SetVolumeSlider(SFXVolume, sfxVolumeSlider);
+            if (uiVolumeSlider) SetVolumeSlider(UIVolume, uiVolumeSlider);
         }
 
         protected override void OnDisable() { base.OnDisable(); }
 
         protected override void OnDestroy() { base.OnDestroy(); }
 
-        void SetUIVolumeSlider(float volume, Slider slider)
+        /// <summary>
+        /// Sets the volume of the master mixer.  
+        /// Called ONLY by the on change even for slider values
+        /// </summary>
+        /// <param name="volume"></param>
+        public void SetMasterMixerValue(float volume)
+        {
+            Debug.Log($"{AUDIO_LOGGING}Setting Master volume to: {volume}");
+            audioMixer.SetFloat("MasterVolume", ConvertVolumeToLogarithmic(volume));
+            currentMasterVolume = volume;
+        }
+
+        /// <summary>
+        /// Sets the volume of the music mixer.  
+        /// Called ONLY by the on change even for slider values
+        /// </summary>
+        /// <param name="volume"></param>
+        public void SetMusicMixerValue(float volume)
+        {
+            Debug.Log($"{AUDIO_LOGGING}Setting Music volume to: {volume}");
+            audioMixer.SetFloat("MusicVolume", ConvertVolumeToLogarithmic(volume));
+            currentMusicVolume = volume;
+        }
+
+        /// <summary>
+        /// Sets the volume of the SFX mixer.  
+        /// Called ONLY by the on change even for slider values
+        /// </summary>
+        /// <param name="volume"></param>
+        public void SetSFXMixerValue(float volume)
+        {
+            Debug.Log($"{AUDIO_LOGGING}Setting SFX volume to: {volume}");
+            audioMixer.SetFloat("SFXVolume", ConvertVolumeToLogarithmic(volume));
+            currentSFXVolume = volume;
+        }
+
+        /// <summary>
+        /// Sets the volume of the UI mixer.  
+        /// Called ONLY by the on change even for slider values
+        /// </summary>
+        /// <param name="volume"></param>
+        public void SetUIMixerValue(float volume)
+        {
+            Debug.Log($"{AUDIO_LOGGING}Setting UI volume to: {volume}");
+            audioMixer.SetFloat("UIVolume", ConvertVolumeToLogarithmic(volume));
+            currentUIVolume = volume;
+        }
+
+        /// <summary>
+        /// Saves the current settings to player prefs. 
+        /// This is done automatically when this component is disabled or destroyed.
+        /// </summary>
+        public override void SaveAllData()
+        {
+            Debug.Log($"{AUDIO_LOGGING}Saving Master Volume to: {currentMasterVolume}");
+            MasterVolume = currentMasterVolume;
+            Debug.Log($"{AUDIO_LOGGING}Saving Music Volume to: {currentMusicVolume}");
+            MusicVolume = currentMusicVolume;
+            Debug.Log($"{AUDIO_LOGGING} Saving SFX Volume to: {currentSFXVolume}");
+            SFXVolume = currentSFXVolume;
+            Debug.Log($"{AUDIO_LOGGING} Saving UI Volume to: {currentSFXVolume}");
+            UIVolume = currentUIVolume;
+            PlayerPrefs.Save();
+        }
+
+        void SetVolumeSlider(float volume, Slider slider)
         {
             slider.value = volume;
         }
 
         float ConvertVolumeToLogarithmic(float volume)
         {
-            return Mathf.Log10(volume) * 20;
+            return 20f * Mathf.Log10(volume);
         }
     }
 }

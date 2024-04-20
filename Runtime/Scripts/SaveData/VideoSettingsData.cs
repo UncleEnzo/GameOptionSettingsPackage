@@ -2,39 +2,17 @@ using UnityEngine;
 
 namespace Nevelson.GameSettingOptions
 {
-    public class SettingsSaveData
+    public class VideoSettingsData
     {
-        const string MASTER_VOLUME = "MASTER";
-        const string MUSIC_VOLUME = "MUSIC";
-        const string SFX_VOLUME = "SFX";
         const string VSYNC = "VSYNC";
         const string FULL_SCREEN = "FULLSCREEN";
         const string RESOLUTION = "RESOLUTION";
         const string TARGET_FPS = "FPS";
         const string GRAPHICS = "GRAPHICS";
-        const float DEFAULT_VOLUME = .5f;
         const bool DEFAULT_VSYNC = false;
         const bool DEFAULT_FULL_SCREEN = true;
         const int DEFAULT_TARGET_FPS = 120;
         const int DEFAULT_GRAPHICS = -1;
-
-        public float MasterVolume
-        {
-            get => PlayerPrefs.GetFloat(MASTER_VOLUME);
-            set => PlayerPrefs.SetFloat(MASTER_VOLUME, value);
-        }
-
-        public float MusicVolume
-        {
-            get => PlayerPrefs.GetFloat(MUSIC_VOLUME);
-            set => PlayerPrefs.SetFloat(MUSIC_VOLUME, value);
-        }
-
-        public float SFXVolume
-        {
-            get => PlayerPrefs.GetFloat(SFX_VOLUME);
-            set => PlayerPrefs.SetFloat(SFX_VOLUME, value);
-        }
 
         public bool VSync
         {
@@ -69,12 +47,9 @@ namespace Nevelson.GameSettingOptions
         /// <summary>
         /// Constructs the class for global game settings.  
         /// </summary>
-        public SettingsSaveData()
+        public VideoSettingsData()
         {
-            if (!PlayerPrefs.HasKey(MASTER_VOLUME) ||
-                !PlayerPrefs.HasKey(MUSIC_VOLUME) ||
-                !PlayerPrefs.HasKey(SFX_VOLUME) ||
-                !PlayerPrefs.HasKey(VSYNC) ||
+            if (!PlayerPrefs.HasKey(VSYNC) ||
                 !PlayerPrefs.HasKey(FULL_SCREEN) ||
                 !PlayerPrefs.HasKey(RESOLUTION) ||
                 !PlayerPrefs.HasKey(TARGET_FPS) ||
@@ -83,9 +58,6 @@ namespace Nevelson.GameSettingOptions
 
             {
                 Debug.Log("Initializing Settings Data");
-                MasterVolume = DEFAULT_VOLUME;
-                MusicVolume = DEFAULT_VOLUME;
-                SFXVolume = DEFAULT_VOLUME;
                 VSync = DEFAULT_VSYNC;
                 FullScreen = DEFAULT_FULL_SCREEN;
                 Resolution = Screen.currentResolution;
