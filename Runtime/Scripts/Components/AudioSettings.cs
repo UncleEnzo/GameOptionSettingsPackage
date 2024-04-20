@@ -77,12 +77,7 @@ namespace Nevelson.GameSettingOptions
                     $"UI volume {UIVolume}");
             }
 
-            //I call this here once because if the values don't change from UI below they don't get set on init
-            if (masterVolumeSlider) SetMasterMixerValue(MasterVolume);
-            if (musicVolumeSlider) SetMusicMixerValue(MusicVolume);
-            if (sfxVolumeSlider) SetSFXMixerValue(SFXVolume);
-            if (uiVolumeSlider) SetUIMixerValue(UIVolume);
-
+            //Setting the slider calls on change which then sets the Mixers using mixer on change values
             if (masterVolumeSlider) SetVolumeSlider(MasterVolume, masterVolumeSlider);
             if (musicVolumeSlider) SetVolumeSlider(MusicVolume, musicVolumeSlider);
             if (sfxVolumeSlider) SetVolumeSlider(SFXVolume, sfxVolumeSlider);
