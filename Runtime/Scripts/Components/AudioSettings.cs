@@ -23,12 +23,6 @@ namespace Nevelson.GameSettingOptions
         [SerializeField, Range(0, 1f)] float defaultSFXVolume = .5f;
         [SerializeField, Range(0, 1f)] float defaultUIVolume = .5f;
 
-
-        float currentMasterVolume;
-        float currentMusicVolume;
-        float currentSFXVolume;
-        float currentUIVolume;
-
         public float MasterVolume
         {
             get => PlayerPrefs.GetFloat(MASTER_VOLUME_KEY, defaultMasterVolume);
@@ -49,7 +43,7 @@ namespace Nevelson.GameSettingOptions
 
         public float UIVolume
         {
-            get => PlayerPrefs.GetFloat(UI_VOLUME_KEY, currentUIVolume);
+            get => PlayerPrefs.GetFloat(UI_VOLUME_KEY, defaultUIVolume);
             set => PlayerPrefs.SetFloat(UI_VOLUME_KEY, value);
         }
 
@@ -108,7 +102,7 @@ namespace Nevelson.GameSettingOptions
         {
             Debug.Log($"{AUDIO_LOGGING}Setting Master volume to: {volume}");
             audioMixer.SetFloat("MasterVolume", ConvertVolumeToLogarithmic(volume));
-            currentMasterVolume = volume;
+            MasterVolume = volume;
         }
 
         /// <summary>
@@ -120,7 +114,7 @@ namespace Nevelson.GameSettingOptions
         {
             Debug.Log($"{AUDIO_LOGGING}Setting Music volume to: {volume}");
             audioMixer.SetFloat("MusicVolume", ConvertVolumeToLogarithmic(volume));
-            currentMusicVolume = volume;
+            MusicVolume = volume;
         }
 
         /// <summary>
@@ -132,7 +126,7 @@ namespace Nevelson.GameSettingOptions
         {
             Debug.Log($"{AUDIO_LOGGING}Setting SFX volume to: {volume}");
             audioMixer.SetFloat("SFXVolume", ConvertVolumeToLogarithmic(volume));
-            currentSFXVolume = volume;
+            SFXVolume = volume;
         }
 
         /// <summary>
@@ -144,7 +138,7 @@ namespace Nevelson.GameSettingOptions
         {
             Debug.Log($"{AUDIO_LOGGING}Setting UI volume to: {volume}");
             audioMixer.SetFloat("UIVolume", ConvertVolumeToLogarithmic(volume));
-            currentUIVolume = volume;
+            UIVolume = volume;
         }
 
         /// <summary>
@@ -153,14 +147,6 @@ namespace Nevelson.GameSettingOptions
         /// </summary>
         public override void SaveAllData()
         {
-            Debug.Log($"{AUDIO_LOGGING}Saving Master Volume to: {currentMasterVolume}");
-            MasterVolume = currentMasterVolume;
-            Debug.Log($"{AUDIO_LOGGING}Saving Music Volume to: {currentMusicVolume}");
-            MusicVolume = currentMusicVolume;
-            Debug.Log($"{AUDIO_LOGGING} Saving SFX Volume to: {currentSFXVolume}");
-            SFXVolume = currentSFXVolume;
-            Debug.Log($"{AUDIO_LOGGING} Saving UI Volume to: {currentSFXVolume}");
-            UIVolume = currentUIVolume;
             PlayerPrefs.Save();
         }
 
