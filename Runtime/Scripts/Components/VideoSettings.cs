@@ -17,6 +17,11 @@ namespace Nevelson.GameSettingOptions
             this.width = width;
             this.height = height;
         }
+
+        public override string ToString()
+        {
+            return $"{width} x {height}";
+        }
     }
 
     public class VideoSettings : SettingsBase
@@ -72,31 +77,6 @@ namespace Nevelson.GameSettingOptions
             Debug.Log($"Setting full screen to: {value}");
             isFullScreen = value;
             Screen.fullScreen = isFullScreen;
-
-            ////sets to full screen with native display size resolution
-            //if (!fullScreenResolutionChanging && isFullScreen)
-            //{
-            //    SetUIDropdown(ResolutionToDropdownIndex(Screen.currentResolution), resolutionDropdown);
-            //}
-            ////Sets to full screen with current resolutions
-            //else if (fullScreenResolutionChanging && isFullScreen)
-            //{
-            //    SetUIDropdown(ResolutionToDropdownIndex(m_resolution), resolutionDropdown);
-            //}
-            ////sets to previously saved resolution (display size could be one of them)
-            //else if (!fullScreenResolutionChanging && !isFullScreen)
-            //{
-            //    SetUIDropdown(ResolutionToDropdownIndex(m_resolution.width, m_resolution.height), resolutionDropdown);
-            //}
-            ////Sets to previously saved resolution
-            //else if (fullScreenResolutionChanging && !isFullScreen)
-            //{
-            //    SetUIDropdown(ResolutionToDropdownIndex(m_resolution.width, m_resolution.height), resolutionDropdown);
-            //}
-            //else
-            //{
-            //    Debug.LogError($"Unaccounted: fullscreenResChange = {fullScreenResolutionChanging}. isFullScreen = {isFullScreen}");
-            //}
 
             if (!fullScreenResolutionChanging)
             {

@@ -12,7 +12,7 @@ namespace Nevelson.GameSettingOptions
         const bool DEFAULT_VSYNC = false;
         const bool DEFAULT_FULL_SCREEN = false;
         const int DEFAULT_TARGET_FPS = 120;
-        DesiredResolution DEFAULT_RESOLUTION = new DesiredResolution()
+        static DesiredResolution DEFAULT_RESOLUTION = new DesiredResolution()
         {
             width = 1920,
             height = 1080,
@@ -37,8 +37,8 @@ namespace Nevelson.GameSettingOptions
 
         public DesiredResolution Resolution
         {
-            get => StringToResolution(PlayerPrefs.GetString(RESOLUTION, ResolutionToString(DEFAULT_RESOLUTION)));
-            set => PlayerPrefs.SetString(RESOLUTION, ResolutionToString(value));
+            get => StringToResolution(PlayerPrefs.GetString(RESOLUTION, DEFAULT_RESOLUTION.ToString()));
+            set => PlayerPrefs.SetString(RESOLUTION, value.ToString());
         }
 
         public int TargetFPS
@@ -75,14 +75,18 @@ namespace Nevelson.GameSettingOptions
 
         static DesiredResolution StringToResolution(string value)
         {
-            int width = int.Parse(value.Substring(0, value.IndexOf(" ")));
-            int height = int.Parse(value.Split('x')[1]);
-            return new DesiredResolution(width, height);
-        }
-
-        static string ResolutionToString(DesiredResolution value)
-        {
-            return $"{value.width} x {value.height}";
+            string[] parts = value.Split('x');
+            if (parts.Length == 2 &&
+                int.TryParse(parts[0].Trim(), out int parsedWidth) &&
+                int.TryParse(parts[1].Trim(), out int parsedHeight))
+            {
+                return new DesiredResolution(parsedWidth, parsedHeight);
+            }
+            else
+            {
+                Debug.LogError("Failed to parse resolutions from string.  Setting to default");
+                return DEFAULT_RESOLUTION;
+            }
         }
     }
 }
