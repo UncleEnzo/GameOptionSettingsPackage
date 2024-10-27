@@ -12,11 +12,10 @@ namespace Nevelson.GameSettingOptions
         const bool DEFAULT_VSYNC = false;
         const bool DEFAULT_FULL_SCREEN = false;
         const int DEFAULT_TARGET_FPS = 120;
-        Resolution DEFAULT_RESOLUTION = new Resolution()
+        DesiredResolution DEFAULT_RESOLUTION = new DesiredResolution()
         {
             width = 1920,
             height = 1080,
-            refreshRate = 60,
         };
 
         int GRAPHICS_DEFAULT()
@@ -36,7 +35,7 @@ namespace Nevelson.GameSettingOptions
             set => PlayerPrefs.SetInt(FULL_SCREEN, BoolToInt(value));
         }
 
-        public Resolution Resolution
+        public DesiredResolution Resolution
         {
             get => StringToResolution(PlayerPrefs.GetString(RESOLUTION, ResolutionToString(DEFAULT_RESOLUTION)));
             set => PlayerPrefs.SetString(RESOLUTION, ResolutionToString(value));
@@ -74,35 +73,16 @@ namespace Nevelson.GameSettingOptions
             return isTrue == 1;
         }
 
-        static Resolution StringToResolution(string value)
+        static DesiredResolution StringToResolution(string value)
         {
             int width = int.Parse(value.Substring(0, value.IndexOf(" ")));
-            int height = int.Parse(value.Split('x')[1].Split('@')[0].TrimStart(' ').TrimEnd(' '));
-            int refreshRate = int.Parse(value.Split('@')[1].Split('H')[0].TrimStart(' '));
-
-            foreach (var resolution in Screen.resolutions)
-            {
-                if (resolution.width == width &&
-                   resolution.height == height &&
-                   resolution.refreshRate == refreshRate)
-                {
-                    return resolution;
-                }
-            }
-
-            Resolution largestResolution = new Resolution()
-            {
-                width = 1920,
-                height = 1080,
-                refreshRate = 60
-            };
-            Debug.LogError($"Could not find resolution {value} | returning: {largestResolution}");
-            return largestResolution;
+            int height = int.Parse(value.Split('x')[1]);
+            return new DesiredResolution(width, height);
         }
 
-        static string ResolutionToString(Resolution value)
+        static string ResolutionToString(DesiredResolution value)
         {
-            return $"{value.width} x {value.height} @ {value.refreshRate} Hz";
+            return $"{value.width} x {value.height}";
         }
     }
 }
