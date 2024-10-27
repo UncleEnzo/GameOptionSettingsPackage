@@ -156,11 +156,6 @@ namespace Nevelson.GameSettingOptions
             {
                 targetFPSDropdown.interactable = !settingsData.VSync;
             }
-
-            if (resolutionDropdown && fullScreenToggle)
-            {
-                resolutionDropdown.interactable = !settingsData.FullScreen;
-            }
         }
 
         protected override void Awake()
@@ -197,11 +192,6 @@ namespace Nevelson.GameSettingOptions
             if (fullScreenToggle) SetUIToggle(settingsData.FullScreen, fullScreenToggle);
         }
 
-        void FixedUpdate()
-        {
-
-        }
-
         protected override void OnDisable()
         {
             base.OnDisable();
@@ -218,13 +208,9 @@ namespace Nevelson.GameSettingOptions
         {
             resolutionDropdown.ClearOptions();
             List<string> resolutionsList = new List<string>();
-            for (int i = 0; i < desiredResolutions.Length; i++)
+            foreach (var resolution in desiredResolutions)
             {
-                foreach (var resolution in desiredResolutions)
-                {
-                    string res = $"{resolution.width} x {resolution.height}";
-                    resolutionsList.Add(res);
-                }
+                resolutionsList.Add(resolution.ToString());
             }
             resolutionDropdown.AddOptions(resolutionsList);
         }
