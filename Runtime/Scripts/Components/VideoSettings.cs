@@ -49,7 +49,6 @@ namespace Nevelson.GameSettingOptions
             300,
             500,
             1000,
-            -1,
         };
 
         Resolution[] ScreenResolutions
@@ -128,7 +127,7 @@ namespace Nevelson.GameSettingOptions
         {
             int screenResIndex = localResToScreenRes[indexValue];
             Resolution resolution = ScreenResolutions[screenResIndex];
-            Screen.SetResolution(resolution.width, resolution.height, isFullScreen);
+            Screen.SetResolution(resolution.width, resolution.height, isFullScreen, resolution.refreshRate);
             this.resolution = resolution;
             Debug.Log($"Setting resolution to: {this.resolution}");
         }
@@ -205,16 +204,15 @@ namespace Nevelson.GameSettingOptions
             base.Awake();
             settingsData = new VideoSettingsData();
 
-            Debug.Log($"Found VSync: {settingsData.VSync}");
-            Debug.Log($"Found Full Screen: {settingsData.FullScreen}");
-            Debug.Log($"Found Resolution {settingsData.Resolution}");
-            Debug.Log($"Found Target FPS: {settingsData.TargetFPS}");
-            Debug.Log($"Found Graphics: {settingsData.Graphics}");
+            Debug.Log($"Video settings: VSync {settingsData.VSync}");
+            Debug.Log($"Video settings: Full Screen {settingsData.FullScreen}");
+            Debug.Log($"Video settings: Resolution {settingsData.Resolution}");
+            Debug.Log($"Video settings: Target FPS {settingsData.TargetFPS}");
+            Debug.Log($"Video settings: Graphics {settingsData.Graphics}");
             graphicsSettingNames = QualitySettings.names;
             if (resolutionDropdown) RefreshResolutionDropdownOptions();
             if (targetFPSDropdown) PopulateAvailableTargetFPS();
             if (graphicsDropdown) PopulateAvailableGraphicalLevels();
-            if (graphicsDropdown) SetCorrectGraphicalDefault();
 
             //I call this here once because if the values don't change from UI below they don't get set on init
             if (targetFPSDropdown) SetTargetFrameRateValue(TargetFPSToDropdownIndex(settingsData.TargetFPS));
@@ -250,15 +248,6 @@ namespace Nevelson.GameSettingOptions
         {
             base.OnDestroy();
             SaveAllData();
-        }
-
-        void SetCorrectGraphicalDefault()
-        {
-            if (settingsData.Graphics == -1)
-            {
-                //rounds to nearest if odd
-                settingsData.Graphics = graphicsSettingNames.Length - 1 / 2;
-            }
         }
 
         void RepopulateDropdownOptionsOnDisplayChange()
