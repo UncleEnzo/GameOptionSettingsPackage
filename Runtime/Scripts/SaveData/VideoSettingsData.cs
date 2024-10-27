@@ -12,7 +12,12 @@ namespace Nevelson.GameSettingOptions
         const bool DEFAULT_VSYNC = false;
         const bool DEFAULT_FULL_SCREEN = false;
         const int DEFAULT_TARGET_FPS = 120;
-        const string DEFAULT_RESOLUTION = "1920 x 1080 @ 60hz";
+        Resolution DEFAULT_RESOLUTION = new Resolution()
+        {
+            width = 1920,
+            height = 1080,
+            refreshRate = 60,
+        };
 
         int GRAPHICS_DEFAULT()
         {
@@ -33,7 +38,7 @@ namespace Nevelson.GameSettingOptions
 
         public Resolution Resolution
         {
-            get => StringToResolution(PlayerPrefs.GetString(RESOLUTION, DEFAULT_RESOLUTION));
+            get => StringToResolution(PlayerPrefs.GetString(RESOLUTION, ResolutionToString(DEFAULT_RESOLUTION)));
             set => PlayerPrefs.SetString(RESOLUTION, ResolutionToString(value));
         }
 
