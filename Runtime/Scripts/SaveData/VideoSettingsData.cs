@@ -85,7 +85,12 @@ namespace Nevelson.GameSettingOptions
                 }
             }
 
-            Resolution largestResolution = Screen.resolutions[Screen.resolutions.Length - 1];
+            Resolution largestResolution = new Resolution()
+            {
+                width = 1920,
+                height = 1080,
+                refreshRate = 60
+            };
             Debug.LogError($"Could not find resolution {value} | returning: {largestResolution}");
             return largestResolution;
         }
