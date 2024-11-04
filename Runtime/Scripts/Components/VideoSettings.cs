@@ -142,7 +142,7 @@ namespace Nevelson.GameSettingOptions
             settingsData.Resolution = m_resolution;
             Debug.Log($"Saving Target FPS to: {targetFPS}");
             settingsData.TargetFPS = targetFPS;
-            Debug.Log($"Saving Graphics to: {graphicsSettingNames[graphics]}");
+            Debug.Log($"Saving Graphics level to: {graphicsSettingNames[graphics]}");
             settingsData.Graphics = graphics;
         }
 
@@ -167,8 +167,8 @@ namespace Nevelson.GameSettingOptions
             Debug.Log($"Video settings: Full Screen {settingsData.FullScreen}");
             Debug.Log($"Video settings: Resolution {settingsData.Resolution}");
             Debug.Log($"Video settings: Target FPS {settingsData.TargetFPS}");
-            Debug.Log($"Video settings: Graphics {settingsData.Graphics}");
             graphicsSettingNames = QualitySettings.names;
+            Debug.Log($"Video settings: Graphics {settingsData.Graphics} | {graphicsSettingNames[settingsData.Graphics]}");
             if (resolutionDropdown) PopulateResolutionOptions();
             if (targetFPSDropdown) PopulateAvailableTargetFPS();
             if (graphicsDropdown) PopulateAvailableGraphicalLevels();
@@ -179,6 +179,7 @@ namespace Nevelson.GameSettingOptions
             if (resolutionDropdown) SetResolutionValue(ResolutionToDropdownIndex(settingsData.Resolution));
             if (fullScreenToggle) SetFullScreenValue(settingsData.FullScreen);
             if (graphicsDropdown) SetGraphicsValue(settingsData.Graphics);
+            else SetGraphicsValue(settingsData.Graphics);
         }
 
         protected override void Start()
