@@ -20,7 +20,7 @@ namespace Nevelson.GameSettingOptions
 
         int GRAPHICS_DEFAULT()
         {
-            return QualitySettings.names.Length - 1;
+            return 0;//QualitySettings.names.Length - 1;
         }
 
         public bool VSync
