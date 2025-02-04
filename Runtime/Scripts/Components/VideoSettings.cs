@@ -32,6 +32,7 @@ namespace Nevelson.GameSettingOptions
         [SerializeField] TMP_Dropdown targetFPSDropdown;
         [SerializeField] TMP_Dropdown graphicsDropdown;
         [SerializeField] bool fullScreenResolutionChanging;
+        [SerializeField] bool vSyncFPSChanging;
         [SerializeField] DesiredResolution[] desiredResolutions;
 
         DesiredResolution m_resolution;
@@ -64,7 +65,11 @@ namespace Nevelson.GameSettingOptions
             Debug.Log($"Setting vSync to: {value}");
             QualitySettings.vSyncCount = value ? 1 : 0;
             isVSync = value;
-            SetUIElementInteractable(isVSync, targetFPSDropdown);
+
+            if (!vSyncFPSChanging)
+            {
+                SetUIElementActive(isVSync, targetFPSDropdown);
+            }
         }
 
         /// <summary>
@@ -80,7 +85,7 @@ namespace Nevelson.GameSettingOptions
 
             if (!fullScreenResolutionChanging)
             {
-                SetUIElementInteractable(isFullScreen, resolutionDropdown);
+                SetUIElementActive(isFullScreen, resolutionDropdown);
             }
         }
 
@@ -112,7 +117,7 @@ namespace Nevelson.GameSettingOptions
             int targetFPS = fpsCaps[indexValue];
             Application.targetFrameRate = targetFPS;
             this.targetFPS = targetFPS;
-            SetUIElementInteractable(isVSync, targetFPSDropdown);
+            SetUIElementActive(isVSync, targetFPSDropdown);
             Debug.Log($"Setting Target FPS Limit to: {Application.targetFrameRate}");
         }
 
@@ -152,9 +157,14 @@ namespace Nevelson.GameSettingOptions
         public void RefreshUIElementInteractables()
         {
             Debug.Log("Refreshing interactables.");
-            if (targetFPSDropdown && vsyncToggle)
+            if (!vSyncFPSChanging)
             {
-                targetFPSDropdown.interactable = !settingsData.VSync;
+                SetUIElementActive(isVSync, targetFPSDropdown);
+            }
+
+            if (!fullScreenResolutionChanging)
+            {
+                SetUIElementActive(isFullScreen, resolutionDropdown);
             }
         }
 
@@ -252,7 +262,7 @@ namespace Nevelson.GameSettingOptions
             dropdown.RefreshShownValue();
         }
 
-        void SetUIElementInteractable(bool value, TMP_Dropdown dropdown)
+        void SetUIElementActive(bool value, TMP_Dropdown dropdown)
         {
             dropdown.interactable = value ? false : true;
         }
