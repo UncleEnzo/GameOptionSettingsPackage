@@ -79,14 +79,22 @@ namespace Nevelson.GameSettingOptions
         /// <param name="value"></param>
         public void SetFullScreenValue(bool value)
         {
-            Debug.Log($"Setting full screen to: {value}");
             isFullScreen = value;
             Screen.fullScreen = isFullScreen;
+
+            //Setting res to match the current resolution of the screen
+            int screenWidth = Screen.currentResolution.width;
+            int screenHeight = Screen.currentResolution.height;
+            DesiredResolution resolution = new DesiredResolution(screenWidth, screenHeight);
+            Screen.SetResolution(resolution.width, resolution.height, isFullScreen);
+            m_resolution = resolution;
 
             if (!fullScreenResolutionChanging)
             {
                 SetUIElementActive(isFullScreen, resolutionDropdown);
             }
+
+            Debug.Log($"Setting resolution to: {m_resolution} | fullscreen: {isFullScreen}");
         }
 
         /// <summary>
