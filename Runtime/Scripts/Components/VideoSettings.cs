@@ -85,8 +85,8 @@ namespace Nevelson.GameSettingOptions
             //Setting res to match the current resolution of the screen
             if (isFullScreen)
             {
-                int screenWidth = Screen.currentResolution.width;
-                int screenHeight = Screen.currentResolution.height;
+                int screenWidth = Display.main.systemWidth;
+                int screenHeight = Display.main.systemHeight;
                 DesiredResolution resolution = new DesiredResolution(screenWidth, screenHeight);
                 Screen.SetResolution(resolution.width, resolution.height, isFullScreen);
                 m_resolution = resolution;
@@ -97,7 +97,7 @@ namespace Nevelson.GameSettingOptions
                 SetUIElementActive(isFullScreen, resolutionDropdown);
             }
 
-            Debug.Log($"Setting resolution to: {m_resolution} | fullscreen: {isFullScreen}");
+            Debug.Log($"Setting fullscreen: {isFullScreen} | resolution to: {m_resolution}");
         }
 
         /// <summary>
