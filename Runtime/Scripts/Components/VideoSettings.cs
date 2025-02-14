@@ -91,8 +91,9 @@ namespace Nevelson.GameSettingOptions
                 Screen.SetResolution(resolution.width, resolution.height, isFullScreen);
                 m_resolution = resolution;
 
-                Debug.LogError($"Setting fullscreen: {isFullScreen} | resolution to: {m_resolution}");
-                Debug.LogError($"Setresolution to: {Screen.currentResolution}");
+                //for debugging :)
+                //Debug.LogError($"Setting fullscreen: {isFullScreen} | resolution to: {m_resolution}");
+                //Debug.LogError($"Setresolution to: {Screen.currentResolution}");
             }
 
             if (!fullScreenResolutionChanging)
