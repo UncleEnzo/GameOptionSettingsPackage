@@ -104,6 +104,13 @@ namespace Nevelson.GameSettingOptions
             Debug.Log($"Setting fullscreen: {isFullScreen} | resolution to: {m_resolution}");
         }
 
+        void SetResolutionValue(DesiredResolution desiredResolution)
+        {
+            Screen.SetResolution(desiredResolution.width, desiredResolution.height, isFullScreen);
+            m_resolution = desiredResolution;
+            Debug.Log($"Setting resolution to: {m_resolution} | fullscreen: {isFullScreen}");
+        }
+
         /// <summary>
         /// Sets the value of the game's resolution.
         /// </summary>
@@ -111,9 +118,7 @@ namespace Nevelson.GameSettingOptions
         public void SetResolutionValue(int indexValue)
         {
             DesiredResolution resolution = desiredResolutions[indexValue];
-            Screen.SetResolution(resolution.width, resolution.height, isFullScreen);
-            m_resolution = resolution;
-            Debug.Log($"Setting resolution to: {m_resolution} | fullscreen: {isFullScreen}");
+            SetResolutionValue(resolution);
         }
 
         /// <summary>
@@ -201,7 +206,7 @@ namespace Nevelson.GameSettingOptions
             //I call this here once because if the values don't change from UI below they don't get set on init
             if (targetFPSDropdown) SetTargetFrameRateValue(TargetFPSToDropdownIndex(settingsData.TargetFPS));
             if (vsyncToggle) SetVsyncValue(settingsData.VSync);
-            if (resolutionDropdown) SetResolutionValue(ResolutionToDropdownIndex(settingsData.Resolution));
+            if (resolutionDropdown) SetResolutionValue(settingsData.Resolution);
             if (fullScreenToggle) SetFullScreenValue(settingsData.FullScreen);
             if (graphicsDropdown) SetGraphicsValue(settingsData.Graphics);
             else SetGraphicsValue(settingsData.Graphics);
