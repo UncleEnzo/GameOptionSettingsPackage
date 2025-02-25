@@ -26,6 +26,7 @@ namespace Nevelson.GameSettingOptions
 
     public class VideoSettings : SettingsBase
     {
+        public static event Action<DesiredResolution> OnSetResolution;
         [SerializeField] Toggle vsyncToggle;
         [SerializeField] Toggle fullScreenToggle;
         [SerializeField] TMP_Dropdown resolutionDropdown;
@@ -33,6 +34,7 @@ namespace Nevelson.GameSettingOptions
         [SerializeField] TMP_Dropdown graphicsDropdown;
         [SerializeField] bool fullScreenResolutionChanging;
         [SerializeField] bool vSyncFPSChanging;
+        [SerializeField] bool use1280x800To1280x720Override;
         [SerializeField] DesiredResolution[] desiredResolutions;
 
         DesiredResolution m_resolution;
@@ -106,8 +108,19 @@ namespace Nevelson.GameSettingOptions
 
         void SetResolutionValue(DesiredResolution desiredResolution)
         {
+            if (use1280x800To1280x720Override)
+            {
+                //steamdeck override to hit pixel perfect
+                if (desiredResolution.width == 1280 && desiredResolution.height == 800)
+                {
+                    Debug.Log("Hit specific steamdeck Resolution. overriding form 1280x800 to 1280x720 to maintain 16:9 ratio instead of 16:10");
+                    desiredResolution = new DesiredResolution(1280, 720);
+                }
+            }
+
             Screen.SetResolution(desiredResolution.width, desiredResolution.height, isFullScreen);
             m_resolution = desiredResolution;
+            OnSetResolution?.Invoke(desiredResolution);
             Debug.Log($"Setting resolution to: {m_resolution} | fullscreen: {isFullScreen}");
         }
 
