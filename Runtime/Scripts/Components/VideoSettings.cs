@@ -90,12 +90,8 @@ namespace Nevelson.GameSettingOptions
                 int screenWidth = Display.main.systemWidth;
                 int screenHeight = Display.main.systemHeight;
                 DesiredResolution resolution = new DesiredResolution(screenWidth, screenHeight);
-                Screen.SetResolution(resolution.width, resolution.height, isFullScreen);
-                m_resolution = resolution;
 
-                //for debugging :)
-                //Debug.LogError($"Setting fullscreen: {isFullScreen} | resolution to: {m_resolution}");
-                //Debug.LogError($"Setresolution to: {Screen.currentResolution}");
+                SetResolutionValue(resolution);
             }
 
             if (!fullScreenResolutionChanging)
