@@ -26,7 +26,7 @@ namespace Nevelson.GameSettingOptions
 
     public class VideoSettings : SettingsBase
     {
-        public static event Action<DesiredResolution> OnSetResolution;
+        public static event Action<DesiredResolution, bool> OnSetResolution;
         [SerializeField] Toggle vsyncToggle;
         [SerializeField] Toggle fullScreenToggle;
         [SerializeField] TMP_Dropdown resolutionDropdown;
@@ -116,7 +116,7 @@ namespace Nevelson.GameSettingOptions
 
             Screen.SetResolution(desiredResolution.width, desiredResolution.height, isFullScreen);
             m_resolution = desiredResolution;
-            OnSetResolution?.Invoke(desiredResolution);
+            OnSetResolution?.Invoke(desiredResolution, isFullScreen);
             Debug.Log($"Setting resolution to: {m_resolution} | fullscreen: {isFullScreen}");
         }
 
