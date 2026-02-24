@@ -105,13 +105,13 @@ namespace Nevelson.GameSettingOptions
 
         void SetResolutionValue(DesiredResolution desiredResolution)
         {
+            DesiredResolution adjusted = new DesiredResolution(0, 0);
             if (use1280x800To1280x720Override)
-            {
-                //steamdeck override to hit pixel perfect
+            {                //steamdeck override to hit pixel perfect
                 if (desiredResolution.width == 1280 && desiredResolution.height == 800)
                 {
                     Debug.Log("Hit specific steamdeck Resolution. overriding form 1280x800 to 1280x720 to maintain 16:9 ratio instead of 16:10");
-                    desiredResolution = new DesiredResolution(1280, 720);
+                    adjusted = new DesiredResolution(1280, 720);
                 }
             }
 
@@ -121,14 +121,24 @@ namespace Nevelson.GameSettingOptions
                 if (desiredResolution.width == 3440 && desiredResolution.height == 1440)
                 {
                     Debug.Log("Hit specific steamdeck Resolution. Overriding form 1280x800 to 3440x1440 to maintain 16:9 ratio instead of 16:10");
-                    desiredResolution = new DesiredResolution(2440, 1440);
+                    adjusted = new DesiredResolution(2440, 1440);
                 }
             }
 
-            Screen.SetResolution(desiredResolution.width, desiredResolution.height, isFullScreen);
-            m_resolution = desiredResolution;
-            OnSetResolution?.Invoke(desiredResolution, isFullScreen);
-            Debug.Log($"Setting resolution to: {m_resolution} | fullscreen: {isFullScreen}");
+            if (adjusted.width == 0 && adjusted.height == 0)
+            {
+                Screen.SetResolution(desiredResolution.width, desiredResolution.height, isFullScreen);
+                m_resolution = desiredResolution;
+                OnSetResolution?.Invoke(desiredResolution, isFullScreen);
+                Debug.Log($"Setting resolution to: {m_resolution} | fullscreen: {isFullScreen}");
+            }
+            else
+            {
+                Screen.SetResolution(adjusted.width, adjusted.height, isFullScreen);
+                m_resolution = adjusted;
+                OnSetResolution?.Invoke(desiredResolution, isFullScreen);
+                Debug.Log($"Setting resolution to: {m_resolution} | fullscreen: {isFullScreen}");
+            }
         }
 
         /// <summary>
