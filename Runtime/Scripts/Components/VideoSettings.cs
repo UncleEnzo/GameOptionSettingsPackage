@@ -120,7 +120,7 @@ namespace Nevelson.GameSettingOptions
             {
                 if (desiredResolution.width == 3440 && desiredResolution.height == 1440)
                 {
-                    Debug.Log("Hit specific steamdeck Resolution. Overriding form 1280x800 to 3440x1440 to maintain 16:9 ratio instead of 16:10");
+                    Debug.Log("Test: Hit Specific Resolution. Overriding 3440x1440 to 2560x1440 maintain 16:9 ratio instead of 16:10");
                     adjusted = new DesiredResolution(2560, 1440);
                 }
             }
@@ -130,14 +130,14 @@ namespace Nevelson.GameSettingOptions
                 Screen.SetResolution(desiredResolution.width, desiredResolution.height, isFullScreen);
                 m_resolution = desiredResolution;
                 OnSetResolution?.Invoke(desiredResolution, isFullScreen);
-                Debug.Log($"Setting resolution to: {m_resolution} | fullscreen: {isFullScreen}");
+                Debug.Log($"Test: NORMAL: Setting resolution to: {m_resolution} | fullscreen: {isFullScreen}");
             }
             else
             {
                 Screen.SetResolution(adjusted.width, adjusted.height, isFullScreen);
                 m_resolution = adjusted;
                 OnSetResolution?.Invoke(desiredResolution, isFullScreen);
-                Debug.Log($"Setting resolution to: {m_resolution} | fullscreen: {isFullScreen}");
+                Debug.Log($"Test: NORMAL: Adjusted is: {m_resolution} | Invoked is {desiredResolution} | fullscreen: {isFullScreen}");
             }
         }
 
