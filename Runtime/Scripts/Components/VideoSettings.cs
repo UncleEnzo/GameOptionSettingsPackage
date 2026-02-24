@@ -35,6 +35,7 @@ namespace Nevelson.GameSettingOptions
         [SerializeField] bool fullScreenResolutionChanging;
         [SerializeField] bool vSyncFPSChanging;
         [SerializeField] bool use1280x800To1280x720Override;
+        [SerializeField] bool use3440x1440To2440x1080Override;
         [SerializeField] DesiredResolution[] desiredResolutions;
 
         DesiredResolution m_resolution;
@@ -111,6 +112,16 @@ namespace Nevelson.GameSettingOptions
                 {
                     Debug.Log("Hit specific steamdeck Resolution. overriding form 1280x800 to 1280x720 to maintain 16:9 ratio instead of 16:10");
                     desiredResolution = new DesiredResolution(1280, 720);
+                }
+            }
+
+            if (use3440x1440To2440x1080Override)
+            {
+                //steamdeck override to hit pixel perfect
+                if (desiredResolution.width == 3440 && desiredResolution.height == 1440)
+                {
+                    Debug.Log("Hit specific steamdeck Resolution. Overriding form 1280x800 to 3440x1440 to maintain 16:9 ratio instead of 16:10");
+                    desiredResolution = new DesiredResolution(2440, 1440);
                 }
             }
 
